@@ -1,54 +1,85 @@
+"use client";
+
+import { useEffect, useState } from "react";
 import Link from "next/link";
+import { auth } from "../../firebase"; // Adjust path to your firebase.js
+import { onAuthStateChanged } from "firebase/auth";
 
 export default function Home() {
-  const message = "Hello Austin!";
+  const [user, setUser] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      setUser(currentUser);
+      setLoading(false);
+    });
+
+    // Cleanup subscription on unmount
+    return () => unsubscribe();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="content" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: 'calc(100vh - var(--header-height))' }}>
+        <div className="loading"></div>
+      </div>
+    );
+  }
+
   return (
     <main className="content">
-      <h1 className="heading">Next.js on Firebase App Hosting</h1>
-      <p>{message}</p>
+      <div className="welcome-section">
+        <h1 className="heading">
+          Welcome{user ? `, ${user.email.split('@')[0]}` : ' to Tada'}
+        </h1>
+        <p className="welcome-message">
+          {user 
+            ? "Your dashboard is ready. Start exploring your data and insights."
+            : "Please sign in to access all features and manage your account."}
+        </p>
+      </div>
 
       <section className="features">
         <article className="card">
-          <h2>Scalable, serverless backends</h2>
+          <h2>Companies</h2>
           <p>
-            Dynamic content is served by{" "}
-            <Link
-              href="https://cloud.google.com/run/docs/overview/what-is-cloud-run"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Cloud Run
-            </Link>
-            , a fully managed container that scales up and down with demand.
-            Visit{" "}
-            <Link href="/ssr">
-              <code>/ssr</code>
-            </Link>{" "}
-            and{" "}
-            <Link href="/ssr/streaming">
-              <code>/ssr/streaming</code>
-            </Link>{" "}
-            to see the server in action.
+            View and manage all your company information in one place.
+            Track performance metrics and key data points.
           </p>
+          <Link href="/companies" className="card-link">
+            Explore Companies →
+          </Link>
         </article>
+        
         <article className="card">
-          <h2>Global CDN</h2>
+          <h2>Alerts</h2>
           <p>
-            Cached content is served by{" "}
-            <Link
-              href="https://cloud.google.com/cdn/docs/overview"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Google Cloud CDN
-            </Link>
-            , a fast and secure way to host cached content globally. Visit
-            <Link href="/ssg">
-              {" "}
-              <code>/ssg</code>
-            </Link>{" "}
+            Stay updated with real-time notifications about important changes
+            and events related to your business.
           </p>
+          <Link href="/alerts" className="card-link">
+            View Alerts →
+          </Link>
         </article>
+        
+        {!user && (
+          <article className="card">
+            <h2>Get Started</h2>
+            <p>
+              Create an account or sign in to access all features and
+              start managing your business data effectively.
+            </p>
+            <div className="card-actions">
+              <Link href="/signup" className="card-button primary">
+                Sign Up
+              </Link>
+              <Link href="/login" className="card-button secondary">
+                Login
+              </Link>
+            </div>
+          </article>
+        )}
       </section>
     </main>
   );

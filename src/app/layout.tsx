@@ -1,4 +1,7 @@
+import React from 'react';
 import type { Metadata } from "next";
+import Link from 'next/link';
+import Sidebar from './components/Sidebar';
 
 import "./globals.css";
 import { Header } from "./components";
@@ -10,7 +13,9 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
-}: Readonly<{ children: React.ReactNode }>) {
+}: {
+  children: React.ReactNode;
+}) {
   return (
     <html lang="en" className="dark-theme">
       <head>
@@ -21,10 +26,15 @@ export default function RootLayout({
         />
       </head>
       <body>
-        <div className="dots" />
-        <Header />
-        {children}
-        <div className="bottom-gradient" />
+        <div className="app-container">
+          <Sidebar />
+          <main className="main-content">
+            <div className="dots" />
+            <Header />
+            {children}
+            <div className="bottom-gradient" />
+          </main>
+        </div>
       </body>
     </html>
   );
