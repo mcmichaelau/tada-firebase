@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { auth } from "../../../firebase"; // Adjust path to your existing firebase.js
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { useRouter } from "next/navigation"; // Import the router
+import Link from "next/link";
 
 export default function Login() {
   const [email, setEmail] = useState<string>("");
@@ -55,7 +56,7 @@ export default function Login() {
       </form>
       {error && <p className="error-message">{error}</p>}
       <p className="signup-link">
-        Don't have an account? <a href="/signup">Sign up</a>
+        Don&apos;t have an account? <Link href="/signup">Sign up</Link>
       </p>
     </main>
   );
